@@ -19,11 +19,11 @@ echo "1..."
 sleep 1
 
 # If the script was not cancelled, remount the file system readonly
-sudo mount -o remount,r /
+# sudo mount -o remount,r /
 
 ## Optional power saving (uncomment if desired):
 # sudo ifconfig wlan0 down  # Disable the Wi-Fi adapter
-sudo tvservice --off  # Disable HDMI video output
+# sudo tvservice --off  # Disable HDMI video output
 
 echo "Killing any existing fluidsynth processes..."
 
@@ -37,8 +37,9 @@ while [[ 1 -eq 1 ]]; do
     # audioDevice=$(cat /proc/asound/cards | grep "bcm2835_alsa" | awk -F" " '{ print $1 }')  # Raspberry Pi on-board audio (high latency - only use if no other options)
     # audioDevice=$(cat /proc/asound/cards | grep "USB-Audio - USB Audio Device" | awk -F" " '{ print $1 }')  # Sabrent USB sound card
     # audioDevice=$(cat /proc/asound/cards | grep "USB-Audio - Logitech" | awk -F" " '{ print $1 }')  # Logitech USB sound card
+    # audioDevice=$(cat /proc/asound/cards | grep "USB-Audio - USB AUDIO" | awk -F" " '{ print $1 }')  # Peavy USB mixer sound card
 
-    audioDevice=$(cat /proc/asound/cards | grep "USB-Audio - USB AUDIO" | awk -F" " '{ print $1 }')  # Peavy USB mixer sound card
+    audioDevice=$(cat /proc/asound/cards | grep "USB-Audio - PRO X" | awk -F" " '{ print $1 }')
 
     if pgrep -x "fluidsynth" > /dev/null
     then
@@ -59,7 +60,7 @@ while [[ 1 -eq 1 ]]; do
         sudo echo 0 | sudo tee /sys/class/leds/led0/brightness &>/dev/null
         sudo echo 0 | sudo tee /sys/class/leds/led1/brightness &>/dev/null
         # Start the FluidSynth server in a new screen session to allow reattaching for troubleshooting purposes
-        screen -dmS FluidSynth0 bash -c "sudo nice -n -20 fluidsynth -i -s -g 0.6 -a alsa -o audio.alsa.device=hw:$audioDevice -c 1 -z 1 -o synth.cpu-cores=4 -o synth.polyphony=128 /usr/share/sounds/sf2/FluidR3_GM.sf2"
+        screen -dmS FluidSynth0 bash -c "sudo nice -n -20 fluidsynth -i -s -g 0.6 -a alsa -o audio.alsa.device=hw:$audioDevice -c 2 -z 64 -o synth.cpu-cores=4 -o synth.polyphony=128 /usr/share/sounds/sf2/FluidR3_GM.sf2"
         sleep 5
     fi
 
